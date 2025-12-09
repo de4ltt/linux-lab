@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build-and-push:
+    build-and-push:
     runs-on: self-hosted
     outputs:
       sha: ${{ steps.set-sha.outputs.sha }}
@@ -26,16 +26,16 @@ jobs:
       - name: Build and push test image
         run: |
           IMAGE_TEST=ghcr.io/vacdotcs/python-app:test-${{ github.sha }}
-          docker build --target test -t $IMAGE_TEST .
-          docker push $IMAGE_TEST
+          podman build --target test -t $IMAGE_TEST .
+          podman push $IMAGE_TEST
 
       - name: Build and push runtime image
         run: |
           IMAGE_RUNTIME=ghcr.io/vacdotcs/python-app:runtime-${{ github.sha }}
-          docker build --target runtime -t $IMAGE_RUNTIME .
-          docker push $IMAGE_RUNTIME
+          podman build --target runtime -t $IMAGE_RUNTIME .
+          podman push $IMAGE_RUNTIME
 
-  test:
+test:
     runs-on: self-hosted
     needs: build-and-push
     steps:
