@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 jobs:
-    build-and-push:
+  build-and-push:
     runs-on: self-hosted
     outputs:
       sha: ${{ steps.set-sha.outputs.sha }}
@@ -35,7 +35,7 @@ jobs:
           podman build --target runtime -t $IMAGE_RUNTIME .
           podman push $IMAGE_RUNTIME
 
-test:
+  test:
     runs-on: self-hosted
     needs: build-and-push
     steps:
@@ -66,19 +66,12 @@ test:
           port: ${{ secrets.SERVER_SSH_PORT }}
           script: |
             set -e
-            
             IMAGE_RUNTIME=ghcr.io/vacdotcs/python-app:runtime-${{ github.sha }}
-            
             podman login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_TOKEN }}
-            
             podman stop python-app || true
-            
             podman rm -f python-app || true
-            
             podman run --replace -d --name python-app --network host -p 8064:8064 $IMAGE_RUNTIME
-            
             podman images --format "{{.Repository}}:{{.Tag}}" \
-            | grep 'python-app:runtime-' \
-            | grep -v "${{ github.sha }}" \
-            | xargs -r podman rmi -f || true
-
+              | grep 'python-app:runtime-' \
+              | grep -v "${{ github.sha }}" \
+              | xargs -r podman rmi -f || true
