@@ -6,11 +6,9 @@ from src.database import init_db, get_db
 
 app = FastAPI()
 
-
 @app.on_event("startup")
 async def startup():
     await init_db()
-
 
 @app.post("/users/", response_model=schemas.User)
 async def create_user(user: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
@@ -20,13 +18,11 @@ async def create_user(user: schemas.UserCreate, db: AsyncSession = Depends(get_d
     await db.refresh(user)
     return user
 
-
 @app.get("/users/", response_model=list[schemas.User])
 async def read_users(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(models.User).offset(skip).limit(limit))
     users = result.scalars().all()
     return users
-
 
 @app.get("/users/{user_id}", response_model=schemas.User)
 async def read_user(user_id: int, db: AsyncSession = Depends(get_db)):
