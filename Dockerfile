@@ -15,6 +15,25 @@ RUN python -m pip install --no-cache-dir --upgrade pip && \
 
 COPY src ./src
 
+
+FROM python:3.10-slim AS test
+
+WORKDIR /app
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc libpq5 && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY pyproject.toml ./
+COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
+COPY src ./src
+COPY tests ./tests
+
+RUN python -m pip install --no-cache-dir -e ".[test]"
+
+CMD ["pytest", "-v"]
+
+
 FROM python:3.10-slim AS runtime
 
 WORKDIR /app
