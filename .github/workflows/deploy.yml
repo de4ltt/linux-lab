@@ -59,4 +59,4 @@ jobs:
           podman images --format "{{.Repository}}:{{.Tag}}" \
           | grep 'web-adm:runtime-' \
           | grep -v "${{ github.sha }}" \
-          | xargs -r podman rmi -f || tru
+          | xargs -r podman rmi -f || true
