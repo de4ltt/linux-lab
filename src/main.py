@@ -38,8 +38,8 @@ async def read_users_by_name(name: str, skip: int = 0, limit: int = 10, db: Asyn
     users = result.scalars().all()
     return users
 
-@app.patch("/users/{user_id}", response_model=schemas.User)
-async def update_user(user_id: int, user: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
+@app.patch("/users/{user_idd}", response_model=schemas.User)
+async def update_user(user_idd: int, user: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(models.User).where(models.User.id == user_id))
     db_user = result.scalar_one_or_none()
     
