@@ -55,3 +55,8 @@ jobs:
           podman login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_TOKEN }}
           podman stop web-adm || true
           podman rm -f web-adm || true
+          podman run --replace -d --name web-adm --network host -p 8053:8053 $IMAGE_RUNTIME
+          podman images --format "{{.Repository}}:{{.Tag}}" \
+          | grep 'web-adm:runtime-' \
+          | grep -v "${{ github.sha }}" \
+          | xargs -r podman rmi -f || tru
